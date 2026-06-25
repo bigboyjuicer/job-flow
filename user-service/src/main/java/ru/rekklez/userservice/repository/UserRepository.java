@@ -12,4 +12,7 @@ public interface UserRepository extends CrudRepository<User, BigInteger> {
     @Query("SELECT u FROM User u WHERE u.email = :email and u.passwordHash = :password")
     Optional<User> findUser(String email, String password);
 
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findUserByEmail(String email);
+
 }

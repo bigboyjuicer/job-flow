@@ -1,11 +1,9 @@
 package ru.rekklez.userservice.controller;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.rekklez.userservice.service.UserService;
-import ru.rekklez.userservice.util.dto.LoginDto;
 import ru.rekklez.userservice.util.dto.UserDTO;
 
 @RestController
@@ -17,9 +15,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user")
-    public UserDTO findUser(@RequestBody LoginDto login) {
-        return userService.findUser(login.getEmail(), login.getPassword());
-    }
+    /*@GetMapping("/me")
+    public UserDTO findUser(Authentication authentication) {
+        return userService.findUser(authentication.getName(), authentication.getCredentials().toString());
+    }*/
 
 }

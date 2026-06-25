@@ -6,9 +6,9 @@ import ru.rekklez.userservice.entity.User;
 import ru.rekklez.userservice.util.dto.UserDTO;
 
 @Mapper
-public interface UserMapper {
+public interface UserDTOMapper {
 
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+    UserDTOMapper INSTANCE = Mappers.getMapper(UserDTOMapper.class);
 
     UserDTO userToUserDT0(User user);
 

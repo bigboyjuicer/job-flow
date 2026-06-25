@@ -1,11 +1,11 @@
 package ru.rekklez.userservice.util.dto;
 
-public class LoginDto {
+public class LoginDTO {
 
     private String email;
     private String password;
 
-    public LoginDto(String email, String password) {
+    public LoginDTO(String email, String password) {
         this.email = email;
         this.password = password;
     }

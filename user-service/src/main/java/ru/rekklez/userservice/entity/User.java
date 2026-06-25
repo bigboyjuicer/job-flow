@@ -8,7 +8,6 @@ import ru.rekklez.userservice.util.enums.Role;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -25,7 +24,7 @@ public class User {
     private String passwordHash;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     private Role role;
 
     @NotNull
@@ -38,7 +37,7 @@ public class User {
 
     private boolean isActive = true;
 
-    private LocalDate createdAt = LocalDate.now();
+    private final LocalDate createdAt = LocalDate.now();
 
     public User() {
     }
@@ -107,48 +106,5 @@ public class User {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return isActive == user.isActive && Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(passwordHash, user.passwordHash) && role == user.role && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(companyName, user.companyName) && Objects.equals(createdAt, user.createdAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, passwordHash, role, firstName, lastName, companyName, isActive, createdAt);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
-                ", role=" + role +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", companyName='" + companyName + '\'' +
-                ", isActive=" + isActive +
-                ", createdAt=" + createdAt +
-                '}';
     }
 }
