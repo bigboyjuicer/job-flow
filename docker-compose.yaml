@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: job-flow
+    ports:
+      - "5432:5432"
+    networks:
+      - job-flow
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - job-flow
+  kafka:
+    image: apache/kafka:latest
+    ports:
+      - "9092:9092"
+    networks:
+      - job-flow
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: "admin"
+      MINIO_ROOT_PASSWORD: "admin1234"
+    ports:
+      - "9000:9000"
+      - "9001:9000"
+    networks:
+      - job-flow
+
+networks:
+  job-flow:
+    name: jobflow
+    external: true

@@ -7,8 +7,10 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import ru.rekklez.userservice.security.filter.JwtAuthenticationFilter;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationProvider provider, AuthenticationManager manager) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationProvider provider, AuthenticationManager manager, JwtAuthenticationFilter jwtAuthenticationFilter) {
         return http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -26,6 +28,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .authenticationManager(manager)
                 .authenticationProvider(provider)
+                .addFilterAt(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
                 .build();
     }
 

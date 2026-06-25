@@ -1,10 +1,11 @@
 package ru.rekklez.userservice.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+import ru.rekklez.userservice.entity.User;
+import ru.rekklez.userservice.security.user.SecurityUser;
 import ru.rekklez.userservice.service.AuthenticationService;
 import ru.rekklez.userservice.service.UserService;
 import ru.rekklez.userservice.util.dto.LoginDTO;
@@ -15,10 +16,12 @@ import ru.rekklez.userservice.util.dto.UserDTO;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
+    private final UserDetailsService userDetailsService;
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
-    public AuthenticationController(UserService userService, AuthenticationService authenticationService) {
+    public AuthenticationController(UserDetailsService userDetailsService, UserService userService, AuthenticationService authenticationService) {
+        this.userDetailsService = userDetailsService;
         this.userService = userService;
         this.authenticationService = authenticationService;
     }
@@ -35,6 +38,12 @@ public class AuthenticationController {
             return ResponseEntity.ok().body("Successfully logged in");
         }
         return ResponseEntity.status(500).body("Something went wrong");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<User> me(Authentication authentication) {
+        SecurityUser securityUser = (SecurityUser) userDetailsService.loadUserByUsername(authentication.getName());
+        return ResponseEntity.ok(securityUser.getUser());
     }
 
 }
