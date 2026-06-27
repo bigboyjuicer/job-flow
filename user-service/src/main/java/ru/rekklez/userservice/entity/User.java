@@ -1,9 +1,10 @@
 package ru.rekklez.userservice.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
+import org.hibernate.validator.constraints.Length;
 import ru.rekklez.userservice.util.enums.Role;
 
 import java.math.BigInteger;
@@ -17,20 +18,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
-    @NotNull
     private String email;
 
-    @NotNull
     private String passwordHash;
 
-    @NotNull
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private Role role;
 
-    @NotNull
     private String firstName;
 
-    @NotNull
     private String lastName;
 
     private String companyName;

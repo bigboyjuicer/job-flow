@@ -3,17 +3,17 @@ package ru.rekklez.userservice.util.mapper;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import ru.rekklez.userservice.entity.User;
-import ru.rekklez.userservice.util.dto.RegisterDTO;
+import ru.rekklez.userservice.util.dto.RegisterRequest;
 
 @Mapper
-public interface RegisterDTOMapper {
+public interface RegisterMapper {
 
-    RegisterDTOMapper INSTANCE = Mappers.getMapper(RegisterDTOMapper.class);
+    RegisterMapper INSTANCE = Mappers.getMapper(RegisterMapper.class);
 
     @Mapping(source = "passwordHash", target = "password")
-    RegisterDTO userToRegisterDTO(User user);
+    RegisterRequest userToRegisterDTO(User user);
 
     @Mapping(source = "password", target = "passwordHash")
-    User registerDTOToUser(RegisterDTO newUser);
+    User registerDTOToUser(RegisterRequest newUser);
 
 }

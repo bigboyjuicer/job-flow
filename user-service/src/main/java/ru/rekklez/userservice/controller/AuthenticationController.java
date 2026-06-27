@@ -1,16 +1,21 @@
 package ru.rekklez.userservice.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.rekklez.userservice.entity.User;
 import ru.rekklez.userservice.security.user.SecurityUser;
 import ru.rekklez.userservice.service.AuthenticationService;
 import ru.rekklez.userservice.service.UserService;
 import ru.rekklez.userservice.util.dto.LoginDTO;
-import ru.rekklez.userservice.util.dto.RegisterDTO;
+import ru.rekklez.userservice.util.dto.RegisterRequest;
 import ru.rekklez.userservice.util.dto.UserDTO;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,8 +32,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody RegisterDTO newUser) {
-        return ResponseEntity.status(201).body(userService.createUser(newUser));
+    public ResponseEntity<UserDTO> register(@RequestBody @Valid RegisterRequest registerRequest) {
+        return ResponseEntity.status(201).body(userService.createUser(registerRequest));
     }
 
     @PostMapping("/login")

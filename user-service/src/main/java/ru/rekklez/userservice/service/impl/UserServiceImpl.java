@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import ru.rekklez.userservice.entity.User;
 import ru.rekklez.userservice.repository.UserRepository;
 import ru.rekklez.userservice.service.UserService;
-import ru.rekklez.userservice.util.dto.RegisterDTO;
+import ru.rekklez.userservice.util.dto.RegisterRequest;
 import ru.rekklez.userservice.util.dto.UserDTO;
-import ru.rekklez.userservice.util.mapper.RegisterDTOMapper;
+import ru.rekklez.userservice.util.mapper.RegisterMapper;
 import ru.rekklez.userservice.util.mapper.UserDTOMapper;
 
 @Service
@@ -24,9 +24,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDTO createUser(RegisterDTO newUser) {
+    public UserDTO createUser(RegisterRequest newUser) {
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        User user = RegisterDTOMapper.INSTANCE.registerDTOToUser(newUser);
+        User user = RegisterMapper.INSTANCE.registerDTOToUser(newUser);
         return UserDTOMapper.INSTANCE.userToUserDT0(userRepository.save(user));
     }
 }
