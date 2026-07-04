@@ -36,17 +36,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<Map<String, String>>> login(@RequestBody LoginRequest user) {
+    public ResponseEntity<ApiResponse<Map<String, String>>> login(@RequestBody @Valid LoginRequest user) {
         Authentication authenticate = authenticationService.authenticate(user);
-        if(authenticate.isAuthenticated()) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(ApiResponse.success(
-                            Map.of("accessToken", jwtService.generateJwt(authenticate.getName())),
-                            "Successfully logged in"
-                    ));
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Something went wrong", null));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(
+                        Map.of("accessToken", jwtService.generateJwt(authenticate.getName())),
+                        "Successfully logged in"
+                ));
     }
 
 }

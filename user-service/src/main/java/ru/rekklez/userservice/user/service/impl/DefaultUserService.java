@@ -1,6 +1,7 @@
 package ru.rekklez.userservice.user.service.impl;
 
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.rekklez.userservice.user.repository.UserRepository;
@@ -28,5 +29,15 @@ public class DefaultUserService implements UserService {
         userToCreate.setPassword(passwordEncoder.encode(userToCreate.getPassword()));
         UserEntity user = RegisterRequestMapper.INSTANCE.registerRequestToUser(userToCreate);
         return UserMapper.INSTANCE.userEntityToUser(userRepository.save(user));
+    }
+
+    @Override
+    public User getUser(String email) {
+        return UserMapper
+                .INSTANCE
+                .userEntityToUser(
+                        userRepository.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email))
+                );
+
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -18,11 +19,16 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationProvider provider, AuthenticationManager manager, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   AuthenticationProvider provider,
+                                                   AuthenticationManager manager,
+                                                   JwtAuthenticationFilter jwtAuthenticationFilter,
+                                                   CustomAuthenticationEntryPoint entryPoint) {
         return http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
                 .authorizeHttpRequests(authorization -> authorization
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated())

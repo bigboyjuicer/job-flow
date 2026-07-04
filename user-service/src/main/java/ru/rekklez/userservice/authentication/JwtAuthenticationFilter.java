@@ -39,6 +39,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String email = jwtService.extractEmail(token);
 
+        //TODO: Разобраться с ошибками со стороны Jwt библиотеки
+
         UserDetails user = userDetailsService.loadUserByUsername(email);
 
         SecurityContext securityContext = SecurityContextHolder.getContext();

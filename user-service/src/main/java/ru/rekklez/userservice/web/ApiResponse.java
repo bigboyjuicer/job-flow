@@ -17,4 +17,15 @@ public record ApiResponse<T>(
     public static <T> ApiResponse<T> error(String message, Object errors) {
         return new ApiResponse<>(false, message, null, errors, LocalDateTime.now());
     }
+
+    @Override
+    public String toString() {
+        return "ApiResponse{" +
+                "success=" + success +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                ", errors=" + errors +
+                ", timeStamp=" + timeStamp +
+                '}';
+    }
 }

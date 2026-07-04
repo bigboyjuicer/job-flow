@@ -6,27 +6,27 @@ import ru.rekklez.userservice.user.entity.Role;
 
 public class RegisterRequest {
 
-        @NotNull(message = "Почта не должна быть null")
-        @Email(message = "Неверный формат почты")
+        @NotNull(message = "Почта не должна быть пустой")
+        @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" , message = "Неверный формат почты")
         private String email;
 
         @NotNull(message = "Пароль не должен быть null")
-        @Length(min = 8, max = 255, message = "Пароль должен быть длиной не меньше 8 и не больше 255 символов")
+        @Length(min = 8, max = 255, message = "Пароль должен быть длиной от 8 до 255 символов")
         private String password;
 
         @NotNull(message = "Роль не должна быть null")
         private Role role;
 
         @NotNull(message = "Имя не должно быть null")
-        @Length(min = 2, max = 8, message = "Имя должно быть длиной не меньше 2 и не больше 255 символов")
+        @Length(min = 2, max = 8, message = "Имя должно быть длиной от 2 до 255 символов")
         private String firstName;
 
         @NotNull(message = "Фамилия не должна быть null")
         @NotBlank(message = "Поле не должно быть пустым")
-        @Length(max = 255, message = "Фамилия не должна быть больше 255 символов")
+        @Length(max = 255, message = "Фамилия должна быть длиной до 255 символов")
         private String lastName;
 
-        @Length(min = 1, max = 255, message = "Название компании не должно быть больше 255 символов")
+        @Length(min = 1, max = 255, message = "Название компании должно быть длиной от 1 до 255 символов")
         private String companyName;
 
         public String getEmail() {
