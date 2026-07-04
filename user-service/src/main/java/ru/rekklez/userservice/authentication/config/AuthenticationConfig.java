@@ -8,7 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.rekklez.userservice.authentication.service.impl.DefaultUserDetailService;
+import ru.rekklez.userservice.user.service.UserService;
 
 @Configuration
 public class AuthenticationConfig {
@@ -19,7 +19,7 @@ public class AuthenticationConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(DefaultUserDetailService defaultUserDetailService) {
+    public AuthenticationProvider authenticationProvider(UserService defaultUserDetailService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(defaultUserDetailService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;

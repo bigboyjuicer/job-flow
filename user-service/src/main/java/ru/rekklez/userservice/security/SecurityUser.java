@@ -1,4 +1,4 @@
-package ru.rekklez.userservice.authentication;
+package ru.rekklez.userservice.security;
 
 import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,12 +8,12 @@ import ru.rekklez.userservice.user.entity.UserEntity;
 import java.util.Collection;
 import java.util.List;
 
-public record AuthUser(UserEntity user) implements UserDetails {
+public record SecurityUser(UserEntity user) implements UserDetails {
 
     @Override
     @NullMarked
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> user.getRole().name());
+        return List.of(() -> "ROLE_" + user.getRole().name());
     }
 
     @Override
