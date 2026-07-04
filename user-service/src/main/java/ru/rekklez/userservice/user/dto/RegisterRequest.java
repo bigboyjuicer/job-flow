@@ -18,7 +18,7 @@ public class RegisterRequest {
         private Role role;
 
         @NotNull(message = "Имя не должно быть null")
-        @Length(min = 2, max = 8, message = "Имя должно быть длиной от 2 до 255 символов")
+        @Length(min = 2, max = 255, message = "Имя должно быть длиной от 2 до 255 символов")
         private String firstName;
 
         @NotNull(message = "Фамилия не должна быть null")
