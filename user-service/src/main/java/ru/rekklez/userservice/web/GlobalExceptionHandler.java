@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.rekklez.userservice.web.exception.NotValidRefreshTokenException;
 import ru.rekklez.userservice.web.exception.UserAlreadyExistsException;
 import ru.rekklez.userservice.web.exception.WrongPasswordException;
 
@@ -40,12 +41,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             UserAlreadyExistsException.class,
             HttpMessageNotReadableException.class,
-            ExpiredJwtException.class,
             BadCredentialsException.class,
-            WrongPasswordException.class}
-    )
-    public ResponseEntity<ApiResponse<Void>> badRequestHandler(UserAlreadyExistsException ex) {
+            WrongPasswordException.class,
+            NotValidRefreshTokenException.class
+    })
+    public ResponseEntity<ApiResponse<Void>> badRequestHandler(Exception ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(ex.getMessage(), ex));
+    }
+
+    @ExceptionHandler({
+            ExpiredJwtException.class
+    })
+    public ResponseEntity<ApiResponse<Void>> unauthorizedHandler(Exception ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(ex.getMessage(), ex));
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)

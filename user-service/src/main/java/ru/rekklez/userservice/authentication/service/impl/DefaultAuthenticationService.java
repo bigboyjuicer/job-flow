@@ -5,7 +5,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.rekklez.userservice.authentication.service.AuthenticationService;
-import ru.rekklez.userservice.authentication.controller.dto.LoginRequest;
+import ru.rekklez.userservice.authentication.controller.dto.request.LoginRequest;
 
 @Service
 public class DefaultAuthenticationService implements AuthenticationService {
@@ -17,8 +17,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
     }
 
     @Override
-    public Authentication authenticate(LoginRequest user) {
-        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.email(), user.password()));
+    public Authentication authenticate(String email, String password) {
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
     }
 
 }

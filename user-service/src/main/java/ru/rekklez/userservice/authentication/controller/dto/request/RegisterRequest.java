@@ -1,4 +1,4 @@
-package ru.rekklez.userservice.authentication.controller.dto;
+package ru.rekklez.userservice.authentication.controller.dto.request;
 
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;

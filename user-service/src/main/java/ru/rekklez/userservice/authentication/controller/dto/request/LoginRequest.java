@@ -1,4 +1,4 @@
-package ru.rekklez.userservice.authentication.controller.dto;
+package ru.rekklez.userservice.authentication.controller.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

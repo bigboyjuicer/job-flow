@@ -7,15 +7,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.rekklez.userservice.authentication.controller.dto.request.RefreshRequest;
+import ru.rekklez.userservice.authentication.controller.dto.response.TokenResponse;
 import ru.rekklez.userservice.authentication.service.AuthenticationService;
-import ru.rekklez.userservice.authentication.service.JwtService;
+import ru.rekklez.userservice.authentication.service.TokenService;
 import ru.rekklez.userservice.security.SecurityUser;
-import ru.rekklez.userservice.authentication.controller.dto.LoginRequest;
-import ru.rekklez.userservice.authentication.controller.dto.RegisterRequest;
+import ru.rekklez.userservice.authentication.controller.dto.request.LoginRequest;
+import ru.rekklez.userservice.authentication.controller.dto.request.RegisterRequest;
 import ru.rekklez.userservice.user.entity.UserEntity;
 import ru.rekklez.userservice.authentication.mapper.RegisterRequestMapper;
 import ru.rekklez.userservice.user.service.UserService;
 import ru.rekklez.userservice.web.ApiResponse;
+import ru.rekklez.userservice.web.exception.NotValidRefreshTokenException;
 
 import java.util.Map;
 
@@ -27,12 +30,12 @@ public class AuthenticationController {
 
     private final UserService userService;
     private final AuthenticationService authenticationService;
-    private final JwtService jwtService;
+    private final TokenService tokenService;
 
-    public AuthenticationController(UserService userService, AuthenticationService authenticationService, JwtService jwtService) {
+    public AuthenticationController(UserService userService, AuthenticationService authenticationService, TokenService tokenService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
-        this.jwtService = jwtService;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/register")
@@ -43,14 +46,33 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<Map<String, String>>> login(@RequestBody @Valid LoginRequest loginRequest) {
-        Authentication authenticate = authenticationService.authenticate(loginRequest);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ApiResponse.success(
-                        Map.of("accessToken", jwtService.generateJwt(authenticate.getName())),
-                        "Successfully logged in"
-                ));
+    public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody @Valid LoginRequest loginRequest) {
+        authenticationService.authenticate(loginRequest.email(), loginRequest.password());
+        String email = loginRequest.email();
+
+        String accessToken = tokenService.generateAccessToken(email);
+        String refreshToken = tokenService.generateRefreshToken(email);
+
+        TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(tokenResponse, "Successfully logged in"));
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<TokenResponse>> refresh(@RequestBody RefreshRequest refreshRequest) {
+        String refreshToken = refreshRequest.refreshToken();
+        if(tokenService.refreshTokenIsValid(refreshToken)) {
+            String email = tokenService.extractEmailFromRefreshToken(refreshToken);
+            String newAccessToken = tokenService.generateAccessToken(email);
+            String newRefreshToken = tokenService.generateRefreshToken(email);
+
+            TokenResponse tokenResponse = new TokenResponse(newAccessToken, newRefreshToken);
+
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(tokenResponse, "Successfully refreshed token"));
+        }
+        throw new NotValidRefreshTokenException("Not valid refresh token");
+    }
+
+    //TODO: Сделать logout
 
 }
