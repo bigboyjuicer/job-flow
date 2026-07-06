@@ -1,12 +1,10 @@
 package ru.rekklez.userservice.user.controller;
 
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.rekklez.userservice.security.SecurityUser;
 import ru.rekklez.userservice.user.controller.dto.request.UpdatePasswordRequest;
@@ -50,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/{email}")
-    //TODO: Сделать ролевой доступ
+    @Secured("ROLE_EMPLOYER")
     public ResponseEntity<ApiResponse<ProfileResponse>> getCandidate(@PathVariable String email) {
         UserEntity userEntity = ((SecurityUser) userService.loadUserByUsername(email)).user();
         ProfileResponse profileResponse = ProfileResponseMapper.INSTANCE.mapToProfileResponse(userEntity);

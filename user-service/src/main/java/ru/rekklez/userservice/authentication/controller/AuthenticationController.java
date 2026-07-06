@@ -20,8 +20,6 @@ import ru.rekklez.userservice.user.service.UserService;
 import ru.rekklez.userservice.web.ApiResponse;
 import ru.rekklez.userservice.web.exception.NotValidRefreshTokenException;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
@@ -73,6 +71,11 @@ public class AuthenticationController {
         throw new NotValidRefreshTokenException("Not valid refresh token");
     }
 
-    //TODO: Сделать logout
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(Authentication authentication) {
+        String email = authentication.getName();
+        tokenService.evictRefreshToken(email);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(null, "Successfully logged out"));
+    }
 
 }

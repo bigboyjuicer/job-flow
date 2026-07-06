@@ -35,7 +35,7 @@ public class UserService implements UserDetailsManager {
     @Override
     @NullMarked
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found (email = " + email + " )"));
+        UserEntity user = userRepository.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User with this email not found"));
         return new SecurityUser(user);
     }
 
@@ -48,7 +48,6 @@ public class UserService implements UserDetailsManager {
         }
         userEntity.setPasswordHash(passwordEncoder.encode(userEntity.getPasswordHash()));
         userRepository.save(userEntity);
-        log.info("New user registered");
     }
 
     @Override
@@ -58,7 +57,7 @@ public class UserService implements UserDetailsManager {
         if(userExists(userEntity.getEmail())) {
             userRepository.updateUserProfile(userEntity.getEmail(), userEntity.getFirstName(), userEntity.getLastName(), userEntity.getCompanyName());
         } else {
-            throw new UsernameNotFoundException("User not found (email = " + userEntity.getEmail() + " )");
+            throw new UsernameNotFoundException("User with this email not found");
         }
     }
 

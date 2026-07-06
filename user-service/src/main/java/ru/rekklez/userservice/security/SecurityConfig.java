@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,6 +16,10 @@ import ru.rekklez.userservice.authentication.JwtAuthenticationFilter;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity(
+        jsr250Enabled = true,
+        securedEnabled = true
+)
 public class SecurityConfig {
 
     @Bean
