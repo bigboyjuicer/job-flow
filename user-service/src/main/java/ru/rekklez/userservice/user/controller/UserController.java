@@ -33,7 +33,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(profileResponse, "Successfully loaded user details"));
     }
 
-    @PostMapping("/me")
+    @PutMapping("/me")
     public ResponseEntity<ApiResponse<Void>> updateUserProfile(Authentication authentication, @RequestBody @Valid UpdateUserProfileRequest profile) {
         UserEntity userEntity = UpdateUserMapper.INSTANCE.mapToUserEntity(profile);
         userEntity.setEmail(authentication.getName());
@@ -41,16 +41,16 @@ public class UserController {
         return  ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(null, "Successfully updated profile"));
     }
 
-    @PostMapping("/me/password")
+    @PutMapping("/me/password")
     public ResponseEntity<ApiResponse<Void>> updateUserPassword(@RequestBody @Valid UpdatePasswordRequest updatedPassword) {
         userService.changePassword(updatedPassword.oldPassword(), updatedPassword.newPassword());
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(null, "Successfully changed password"));
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/{id}")
     @Secured("ROLE_EMPLOYER")
-    public ResponseEntity<ApiResponse<ProfileResponse>> getCandidate(@PathVariable String email) {
-        UserEntity userEntity = ((SecurityUser) userService.loadUserByUsername(email)).user();
+    public ResponseEntity<ApiResponse<ProfileResponse>> getCandidate(@PathVariable long id) {
+        UserEntity userEntity = ((SecurityUser) userService.loadUserById(id)).user();
         ProfileResponse profileResponse = ProfileResponseMapper.INSTANCE.mapToProfileResponse(userEntity);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(profileResponse, "Successfully loaded candidate details"));
     }

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Entity
@@ -13,7 +12,7 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     private String email;
 
@@ -28,15 +27,22 @@ public class UserEntity {
 
     private String companyName;
 
-    private boolean isActive = true;
+    private boolean isActive;
 
-    private final LocalDate createdAt = LocalDate.now();
+    @Column(updatable = false)
+    private LocalDate createdAt;
 
-    public BigInteger getId() {
+    @PrePersist
+    protected void onCreate() {
+        this.isActive = true;
+        this.createdAt = LocalDate.now();
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

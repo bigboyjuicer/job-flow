@@ -14,9 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import ru.rekklez.userservice.security.SecurityUser;
 import ru.rekklez.userservice.user.entity.UserEntity;
 import ru.rekklez.userservice.user.repository.UserRepository;
-import ru.rekklez.userservice.security.SecurityUser;
 import ru.rekklez.userservice.web.exception.UserAlreadyExistsException;
 import ru.rekklez.userservice.web.exception.WrongPasswordException;
 
@@ -36,6 +36,11 @@ public class UserService implements UserDetailsManager {
     @NullMarked
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity user = userRepository.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User with this email not found"));
+        return new SecurityUser(user);
+    }
+
+    public UserDetails loadUserById(long id) {
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User with this id not found"));
         return new SecurityUser(user);
     }
 

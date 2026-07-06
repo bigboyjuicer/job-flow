@@ -1,7 +1,5 @@
 package ru.rekklez.userservice.authentication.service;
 
-import javax.crypto.SecretKey;
-
 public interface TokenService {
     String generateAccessToken(String email);
     String generateRefreshToken(String email);

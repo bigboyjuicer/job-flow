@@ -5,10 +5,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import ru.rekklez.userservice.user.entity.UserEntity;
 
-import java.math.BigInteger;
 import java.util.Optional;
 
-public interface UserRepository extends CrudRepository<UserEntity, BigInteger> {
+public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
     @Query("SELECT u FROM UserEntity u WHERE u.email = :email")
     Optional<UserEntity> findUserByEmail(String email);
@@ -22,8 +21,4 @@ public interface UserRepository extends CrudRepository<UserEntity, BigInteger> {
     void updateUserPassword(String email, String password);
 
     boolean existsByEmail(String email);
-
-    @Query("SELECT u FROM UserEntity u WHERE u.email = :email AND u.passwordHash = :pasword")
-    boolean passwordIsValid(String email, String password);
-
 }

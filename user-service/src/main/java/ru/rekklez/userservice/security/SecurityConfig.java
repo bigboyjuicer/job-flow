@@ -46,7 +46,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(List.of("localhost:8080", "127.0.0.1:8080"));
+            configuration.setAllowedOrigins(List.of("http://localhost:8080", "http://127.0.0.1:8080"));
             configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
             configuration.setAllowedHeaders(List.of("Authorization"));
             return configuration;

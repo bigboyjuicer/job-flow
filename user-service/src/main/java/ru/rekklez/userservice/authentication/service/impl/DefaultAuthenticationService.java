@@ -5,7 +5,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.rekklez.userservice.authentication.service.AuthenticationService;
-import ru.rekklez.userservice.authentication.controller.dto.request.LoginRequest;
 
 @Service
 public class DefaultAuthenticationService implements AuthenticationService {

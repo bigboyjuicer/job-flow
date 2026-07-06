@@ -8,8 +8,6 @@ services:
       - "5432:5432"
     networks:
       - job-flow
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   redis:
     image: redis:latest
     ports:
@@ -30,7 +28,7 @@ services:
       MINIO_ROOT_PASSWORD: "admin1234"
     ports:
       - "9000:9000"
-      - "9001:9000"
+      - "9001:9001"
     networks:
       - job-flow
 
