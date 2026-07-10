@@ -1,0 +1,18 @@
+package ru.rekklez.vacancyservice.dto.response;
+
+import ru.rekklez.vacancyservice.entity.Status;
+
+import java.time.LocalDate;
+
+public record VacancyResponse(
+        Long employerId,
+        String title,
+        String description,
+        Integer salaryFrom,
+        Integer salaryTo,
+        String city,
+        Integer experienceYears,
+        Status status,
+        LocalDate createdAt,
+        LocalDate updatedAt
+) {}

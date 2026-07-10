@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS vacancies (
     salary_from INT,
     salary_to INT,
     city VARCHAR(255) NOT NULL,
-    experience_year INT,
+    experience_years INT,
     status STATUS NOT NULL,
     created_at DATE NOT NULL,
     updated_at DATE NOT NULL
