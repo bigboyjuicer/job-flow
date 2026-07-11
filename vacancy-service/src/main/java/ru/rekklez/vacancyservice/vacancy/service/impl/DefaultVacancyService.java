@@ -21,9 +21,11 @@ import java.util.List;
 public class DefaultVacancyService implements VacancyService {
 
     private final VacancyJpaRepository repository;
+    private final VacancyMapper vacancyMapper;
 
-    public DefaultVacancyService(VacancyJpaRepository repository) {
+    public DefaultVacancyService(VacancyJpaRepository repository, VacancyMapper vacancyMapper) {
         this.repository = repository;
+        this.vacancyMapper = vacancyMapper;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class DefaultVacancyService implements VacancyService {
     @Override
     @Transactional
     public VacancyEntity createVacancy(CreateVacancyRequest vacancyToCreate, Long employerId) {
-        VacancyEntity vacancy = VacancyMapper.INSTANCE.toVacancyEntity(vacancyToCreate);
+        VacancyEntity vacancy = vacancyMapper.toVacancyEntity(vacancyToCreate);
         vacancy.setEmployerId(employerId);
         return repository.save(vacancy);
     }
@@ -57,7 +59,7 @@ public class DefaultVacancyService implements VacancyService {
     public VacancyEntity updateVacancy(Long id, UpdateVacancyRequest vacancyToUpdate, Long employerId) {
         if(!validEmployerId(id, employerId)) throw new IllegalArgumentException("You are not able to update this vacancy");
 
-        VacancyEntity vacancy = VacancyMapper.INSTANCE.toVacancyEntity(vacancyToUpdate);
+        VacancyEntity vacancy = vacancyMapper.toVacancyEntity(vacancyToUpdate);
         vacancy.setId(id);
         vacancy.setEmployerId(employerId);
 

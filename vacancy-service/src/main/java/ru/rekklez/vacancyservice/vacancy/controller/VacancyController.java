@@ -23,9 +23,11 @@ import java.util.List;
 public class VacancyController {
 
     private final VacancyService service;
+    private final VacancyMapper vacancyMapper;
 
-    public VacancyController(VacancyService service) {
+    public VacancyController(VacancyService service, VacancyMapper vacancyMapper) {
         this.service = service;
+        this.vacancyMapper = vacancyMapper;
     }
 
     @GetMapping
@@ -39,14 +41,14 @@ public class VacancyController {
         List<VacancyResponse> vacancies =
                 service
                         .getVacancies(Pageable.ofSize(50).withPage(page), city, salaryMin, experienceMax, status)
-                        .map(VacancyMapper.INSTANCE::toVacancyResponse)
+                        .map(vacancyMapper::toVacancyResponse)
                         .getContent();
         return ResponseEntity.ok().body(ApiResponse.success(vacancies, "Successfully found vacancies"));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<VacancyResponse>> getVacancy(@PathVariable Long id) {
-        VacancyResponse vacancy = VacancyMapper.INSTANCE.toVacancyResponse(service.getVacancy(id));
+        VacancyResponse vacancy = vacancyMapper.toVacancyResponse(service.getVacancy(id));
         return ResponseEntity.ok().body(ApiResponse.success(vacancy, "Vacancy successfully found"));
     }
 
@@ -54,7 +56,7 @@ public class VacancyController {
     @Secured("ROLE_EMPLOYER")
     public ResponseEntity<ApiResponse<VacancyResponse>> createVacancy(CreateVacancyRequest vacancyToCreate, Authentication authentication) {
         Long employerId = getEmployerId(authentication);
-        VacancyResponse vacancy = VacancyMapper.INSTANCE.toVacancyResponse(service.createVacancy(vacancyToCreate, employerId));
+        VacancyResponse vacancy = vacancyMapper.toVacancyResponse(service.createVacancy(vacancyToCreate, employerId));
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(vacancy, "Vacancy successfully created"));
     }
 
@@ -62,7 +64,7 @@ public class VacancyController {
     @Secured("ROLE_EMPLOYER")
     public ResponseEntity<ApiResponse<VacancyResponse>> updateVacancy(@PathVariable Long id, UpdateVacancyRequest vacancyToUpdate, Authentication authentication) {
         Long employerId = getEmployerId(authentication);
-        VacancyResponse vacancy = VacancyMapper.INSTANCE.toVacancyResponse(service.updateVacancy(id, vacancyToUpdate, employerId));
+        VacancyResponse vacancy = vacancyMapper.toVacancyResponse(service.updateVacancy(id, vacancyToUpdate, employerId));
         return ResponseEntity.ok().body(ApiResponse.success(vacancy, "Vacancy successfully updated"));
     }
 
@@ -81,7 +83,7 @@ public class VacancyController {
         List<VacancyResponse> vacancies = service
                         .getMyVacancies(employerId)
                         .stream()
-                        .map(VacancyMapper.INSTANCE::toVacancyResponse)
+                        .map(vacancyMapper::toVacancyResponse)
                         .toList();
         return ResponseEntity.ok().body(ApiResponse.success(vacancies, "Successfully found your vacancies"));
     }

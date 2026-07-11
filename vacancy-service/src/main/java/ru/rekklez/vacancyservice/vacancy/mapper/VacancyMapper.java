@@ -1,16 +1,16 @@
 package ru.rekklez.vacancyservice.vacancy.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.*;
 import ru.rekklez.vacancyservice.vacancy.controller.dto.request.UpdateVacancyRequest;
 import ru.rekklez.vacancyservice.vacancy.controller.dto.request.CreateVacancyRequest;
 import ru.rekklez.vacancyservice.vacancy.controller.dto.response.VacancyResponse;
 import ru.rekklez.vacancyservice.vacancy.entity.VacancyEntity;
 
-@Mapper
+@Mapper(
+        componentModel = MappingConstants.ComponentModel.SPRING,
+        uses = CategoryMapper.class
+)
 public interface VacancyMapper {
-
-    VacancyMapper INSTANCE = Mappers.getMapper(VacancyMapper.class);
 
     VacancyResponse toVacancyResponse(VacancyEntity vacancy);
 

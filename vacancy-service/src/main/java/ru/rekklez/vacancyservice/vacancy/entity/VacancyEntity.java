@@ -5,6 +5,7 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "vacancies")
@@ -27,6 +28,14 @@ public class VacancyEntity {
     private String city;
 
     private Integer experienceYears;
+
+    @ManyToMany
+    @JoinTable(
+            name = "vacancy_categories",
+            joinColumns = @JoinColumn(name = "vacancy_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id")
+    )
+    private List<CategoryEntity> categories;
 
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private Status status;
@@ -146,5 +155,13 @@ public class VacancyEntity {
 
     public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<CategoryEntity> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
     }
 }
