@@ -1,12 +1,15 @@
 package ru.rekklez.vacancyservice.vacancy.controller;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 import ru.rekklez.ApiResponse;
+import ru.rekklez.vacancyservice.security.SecurityUser;
+import ru.rekklez.vacancyservice.vacancy.controller.dto.request.UpdateVacancyRequest;
+import ru.rekklez.vacancyservice.vacancy.controller.dto.request.CreateVacancyRequest;
 import ru.rekklez.vacancyservice.vacancy.controller.dto.response.VacancyResponse;
 import ru.rekklez.vacancyservice.vacancy.entity.Status;
 import ru.rekklez.vacancyservice.vacancy.mapper.VacancyMapper;
@@ -41,4 +44,49 @@ public class VacancyController {
         return ResponseEntity.ok().body(ApiResponse.success(vacancies, "Successfully found vacancies"));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<VacancyResponse>> getVacancy(@PathVariable Long id) {
+        VacancyResponse vacancy = VacancyMapper.INSTANCE.toVacancyResponse(service.getVacancy(id));
+        return ResponseEntity.ok().body(ApiResponse.success(vacancy, "Vacancy successfully found"));
+    }
+
+    @PostMapping
+    @Secured("ROLE_EMPLOYER")
+    public ResponseEntity<ApiResponse<VacancyResponse>> createVacancy(CreateVacancyRequest vacancyToCreate, Authentication authentication) {
+        Long employerId = getEmployerId(authentication);
+        VacancyResponse vacancy = VacancyMapper.INSTANCE.toVacancyResponse(service.createVacancy(vacancyToCreate, employerId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(vacancy, "Vacancy successfully created"));
+    }
+
+    @PutMapping("/{id}")
+    @Secured("ROLE_EMPLOYER")
+    public ResponseEntity<ApiResponse<VacancyResponse>> updateVacancy(@PathVariable Long id, UpdateVacancyRequest vacancyToUpdate, Authentication authentication) {
+        Long employerId = getEmployerId(authentication);
+        VacancyResponse vacancy = VacancyMapper.INSTANCE.toVacancyResponse(service.updateVacancy(id, vacancyToUpdate, employerId));
+        return ResponseEntity.ok().body(ApiResponse.success(vacancy, "Vacancy successfully updated"));
+    }
+
+    @DeleteMapping("/{id}")
+    @Secured("ROLE_EMPLOYER")
+    public ResponseEntity<ApiResponse<Void>> deleteVacancy(@PathVariable Long id, Authentication authentication) {
+        Long employerId = getEmployerId(authentication);
+        service.deleteVacancy(id, employerId);
+        return ResponseEntity.ok().body(ApiResponse.success(null, "Vacancy successfully deleted"));
+    }
+
+    @GetMapping("/me")
+    @Secured("ROLE_EMPLOYER")
+    public ResponseEntity<ApiResponse<List<VacancyResponse>>> getMyVacancies(Authentication authentication) {
+        Long employerId = getEmployerId(authentication);
+        List<VacancyResponse> vacancies = service
+                        .getMyVacancies(employerId)
+                        .stream()
+                        .map(VacancyMapper.INSTANCE::toVacancyResponse)
+                        .toList();
+        return ResponseEntity.ok().body(ApiResponse.success(vacancies, "Successfully found your vacancies"));
+    }
+
+    private Long getEmployerId(Authentication authentication) {
+        return ((SecurityUser) authentication.getPrincipal()).id();
+    }
 }

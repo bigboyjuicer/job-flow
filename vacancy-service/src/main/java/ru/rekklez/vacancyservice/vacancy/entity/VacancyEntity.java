@@ -38,9 +38,8 @@ public class VacancyEntity {
     public VacancyEntity() {
     }
 
-    public VacancyEntity(Long employerId, Long id, String title, String description, Integer salaryFrom, Integer salaryTo, String city, Integer experienceYears, Status status) {
+    public VacancyEntity(Long employerId, String title, String description, Integer salaryFrom, Integer salaryTo, String city, Integer experienceYears, Status status) {
         this.employerId = employerId;
-        this.id = id;
         this.title = title;
         this.description = description;
         this.salaryFrom = salaryFrom;
