@@ -18,8 +18,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.rekklez.ApiResponse;
 import ru.rekklez.userservice.authentication.service.impl.DefaultTokenService;
-import ru.rekklez.userservice.web.ApiResponse;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String token = authorization.substring(7);
-            String email = jwtService.extractEmailFromAccessToken(token);
+            String email = jwtService.extractClaimsFromAccessToken(token).getSubject();
             UserDetails user = userDetailsService.loadUserByUsername(email);
 
             SecurityContext securityContext = SecurityContextHolder.getContext();

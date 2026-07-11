@@ -7,12 +7,17 @@
         <artifactId>jobflow-parent</artifactId>
         <version>0.1.0</version>
     </parent>
-    <groupId>ru.rekklez</groupId>
+
+
     <artifactId>user-service</artifactId>
     <name>user-service</name>
     <description>user-service</description>
 
     <dependencies>
+        <dependency>
+            <groupId>ru.rekklez</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
@@ -42,6 +47,7 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
+            <version>1.6.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -55,11 +61,13 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
+            <version>0.13.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
+            <version>0.13.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>

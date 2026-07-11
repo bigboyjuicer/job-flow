@@ -1,5 +1,6 @@
 package ru.rekklez.userservice.authentication.controller;
 
+import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import ru.rekklez.userservice.authentication.service.TokenService;
 import ru.rekklez.userservice.security.SecurityUser;
 import ru.rekklez.userservice.user.entity.UserEntity;
 import ru.rekklez.userservice.user.service.UserService;
-import ru.rekklez.userservice.web.ApiResponse;
+import ru.rekklez.ApiResponse;
 import ru.rekklez.userservice.web.exception.NotValidRefreshTokenException;
 
 @RestController
@@ -48,11 +49,13 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody @Valid LoginRequest loginRequest) {
-        authenticationService.authenticate(loginRequest.email(), loginRequest.password());
-        String email = loginRequest.email();
+        Authentication authentication = authenticationService.authenticate(loginRequest.email(), loginRequest.password());
+        Long id = ((SecurityUser) authentication.getPrincipal()).user().getId();
+        String email = authentication.getName();
+        String role = authentication.getAuthorities().stream().findFirst().get().toString();
 
-        String accessToken = tokenService.generateAccessToken(email);
-        String refreshToken = tokenService.generateRefreshToken(email);
+        String accessToken = tokenService.generateAccessToken(email, role, id);
+        String refreshToken = tokenService.generateRefreshToken(email, role, id);
 
         TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken);
 
@@ -63,9 +66,12 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<TokenResponse>> refresh(@RequestBody RefreshRequest refreshRequest) {
         String refreshToken = refreshRequest.refreshToken();
         if(tokenService.refreshTokenIsValid(refreshToken)) {
-            String email = tokenService.extractEmailFromRefreshToken(refreshToken);
-            String newAccessToken = tokenService.generateAccessToken(email);
-            String newRefreshToken = tokenService.generateRefreshToken(email);
+            Claims claims = tokenService.extractClaimsFromRefreshToken(refreshToken);
+            String email = claims.getSubject();
+            String role = (String) claims.get("role");
+            Long id = (Long) claims.get("id");
+            String newAccessToken = tokenService.generateAccessToken(email, role, id);
+            String newRefreshToken = tokenService.generateRefreshToken(email, role, id);
 
             TokenResponse tokenResponse = new TokenResponse(newAccessToken, newRefreshToken);
 

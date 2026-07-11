@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.rekklez.ApiResponse;
 import ru.rekklez.userservice.security.SecurityUser;
 import ru.rekklez.userservice.user.controller.dto.request.UpdatePasswordRequest;
 import ru.rekklez.userservice.user.controller.dto.request.UpdateUserProfileRequest;
@@ -14,7 +15,6 @@ import ru.rekklez.userservice.user.entity.UserEntity;
 import ru.rekklez.userservice.user.mapper.ProfileResponseMapper;
 import ru.rekklez.userservice.user.mapper.UpdateUserMapper;
 import ru.rekklez.userservice.user.service.UserService;
-import ru.rekklez.userservice.web.ApiResponse;
 
 @RestController
 @RequestMapping("/users")
