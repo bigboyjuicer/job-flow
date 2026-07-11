@@ -1,8 +1,8 @@
-package ru.rekklez.vacancyservice.specification;
+package ru.rekklez.vacancyservice.vacancy.specification;
 
 import org.springframework.data.jpa.domain.Specification;
-import ru.rekklez.vacancyservice.entity.Status;
-import ru.rekklez.vacancyservice.entity.VacancyEntity;
+import ru.rekklez.vacancyservice.vacancy.entity.Status;
+import ru.rekklez.vacancyservice.vacancy.entity.VacancyEntity;
 
 public class VacancySpecification {
 

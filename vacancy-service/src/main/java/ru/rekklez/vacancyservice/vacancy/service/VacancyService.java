@@ -1,8 +1,8 @@
-package ru.rekklez.vacancyservice.service;
+package ru.rekklez.vacancyservice.vacancy.service;
 
 import org.springframework.data.domain.Page;
-import ru.rekklez.vacancyservice.entity.Status;
-import ru.rekklez.vacancyservice.entity.VacancyEntity;
+import ru.rekklez.vacancyservice.vacancy.entity.Status;
+import ru.rekklez.vacancyservice.vacancy.entity.VacancyEntity;
 import org.springframework.data.domain.Pageable;
 
 public interface VacancyService {

@@ -1,6 +1,6 @@
-package ru.rekklez.vacancyservice.dto.response;
+package ru.rekklez.vacancyservice.vacancy.controller.dto.response;
 
-import ru.rekklez.vacancyservice.entity.Status;
+import ru.rekklez.vacancyservice.vacancy.entity.Status;
 
 import java.time.LocalDate;
 

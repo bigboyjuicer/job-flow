@@ -1,4 +1,4 @@
-package ru.rekklez.vacancyservice.entity;
+package ru.rekklez.vacancyservice.vacancy.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;

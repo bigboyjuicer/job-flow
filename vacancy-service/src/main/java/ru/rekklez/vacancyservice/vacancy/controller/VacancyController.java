@@ -1,4 +1,4 @@
-package ru.rekklez.vacancyservice.controller;
+package ru.rekklez.vacancyservice.vacancy.controller;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.rekklez.ApiResponse;
-import ru.rekklez.vacancyservice.dto.response.VacancyResponse;
-import ru.rekklez.vacancyservice.entity.Status;
-import ru.rekklez.vacancyservice.mapper.VacancyMapper;
-import ru.rekklez.vacancyservice.service.VacancyService;
+import ru.rekklez.vacancyservice.vacancy.controller.dto.response.VacancyResponse;
+import ru.rekklez.vacancyservice.vacancy.entity.Status;
+import ru.rekklez.vacancyservice.vacancy.mapper.VacancyMapper;
+import ru.rekklez.vacancyservice.vacancy.service.VacancyService;
 
 import java.util.List;
 

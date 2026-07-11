@@ -1,9 +1,9 @@
-package ru.rekklez.vacancyservice.mapper;
+package ru.rekklez.vacancyservice.vacancy.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import ru.rekklez.vacancyservice.dto.response.VacancyResponse;
-import ru.rekklez.vacancyservice.entity.VacancyEntity;
+import ru.rekklez.vacancyservice.vacancy.controller.dto.response.VacancyResponse;
+import ru.rekklez.vacancyservice.vacancy.entity.VacancyEntity;
 
 @Mapper
 public interface VacancyMapper {
