@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.rekklez.ApiResponse;
 import ru.rekklez.userservice.web.exception.NotValidRefreshTokenException;
 import ru.rekklez.userservice.web.exception.UserAlreadyExistsException;
 import ru.rekklez.userservice.web.exception.WrongPasswordException;

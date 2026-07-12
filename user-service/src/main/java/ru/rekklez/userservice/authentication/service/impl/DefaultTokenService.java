@@ -1,5 +1,6 @@
 package ru.rekklez.userservice.authentication.service.impl;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -38,20 +39,20 @@ public class DefaultTokenService implements TokenService {
     }
 
     @Override
-    public String generateAccessToken(String email) {
-        return generateJwtToken(email, accessSecretKey, accessTokenTtl);
+    public String generateAccessToken(String email, String role, Long id) {
+        return generateJwtToken(email, role, id, accessSecretKey, accessTokenTtl);
     }
 
     @Override
-    public String generateRefreshToken(String email) {
-        String refreshToken = generateJwtToken(email, refreshSecretKey, refreshTokenTtl);
+    public String generateRefreshToken(String email, String role, Long id) {
+        String refreshToken = generateJwtToken(email, role, id, refreshSecretKey, refreshTokenTtl);
         stringRedisTemplate.opsForValue().set("refresh:" + email, refreshToken, Expiration.from(refreshTokenTtl, TimeUnit.MILLISECONDS));
         return refreshToken;
     }
 
     @Override
     public boolean refreshTokenIsValid(String refreshToken) {
-        String email = extractEmailFromRefreshToken(refreshToken);
+        String email = extractClaimsFromRefreshToken(refreshToken).getSubject();
         String validRefreshToken = stringRedisTemplate.opsForValue().get("refresh:" + email);
         if(validRefreshToken != null) {
             return validRefreshToken.equals(refreshToken);
@@ -64,9 +65,11 @@ public class DefaultTokenService implements TokenService {
         stringRedisTemplate.delete("refresh:" + email);
     }
 
-    private String generateJwtToken(String email, SecretKey secretKey, long tokenTtl) {
+    private String generateJwtToken(String email, String role, Long id,  SecretKey secretKey, long tokenTtl) {
         return Jwts.builder()
                 .subject(email)
+                .claim("role", role)
+                .claim("id", id)
                 .issuedAt(Date.from(Instant.now()))
                 .expiration(Date.from(Instant.now().plusMillis(tokenTtl)))
                 .signWith(secretKey)
@@ -74,21 +77,20 @@ public class DefaultTokenService implements TokenService {
     }
 
     @Override
-    public String extractEmailFromAccessToken(String token) {
-        return extractEmail(token, accessSecretKey);
+    public Claims extractClaimsFromAccessToken(String token) {
+        return extractClaims(token, accessSecretKey);
     }
 
     @Override
-    public String extractEmailFromRefreshToken(String token) {
-        return extractEmail(token, refreshSecretKey);
+    public Claims extractClaimsFromRefreshToken(String token) {
+        return extractClaims(token, refreshSecretKey);
     }
 
-    private String extractEmail(String token, SecretKey secretKey) {
+    private Claims extractClaims(String token, SecretKey secretKey) {
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+                .getPayload();
     }
 }
