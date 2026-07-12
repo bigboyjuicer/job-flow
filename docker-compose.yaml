@@ -43,7 +43,7 @@ services:
   user-service:
     image: bigboyjuicer/jobflow-user-service
     env_file:
-      - .env
+      - docker-env
     ports:
       - "8080:8080"
     networks:
