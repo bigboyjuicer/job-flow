@@ -54,7 +54,7 @@ public class VacancyController {
 
     @PostMapping
     @Secured("ROLE_EMPLOYER")
-    public ResponseEntity<ApiResponse<VacancyResponse>> createVacancy(CreateVacancyRequest vacancyToCreate, Authentication authentication) {
+    public ResponseEntity<ApiResponse<VacancyResponse>> createVacancy(@RequestBody CreateVacancyRequest vacancyToCreate, Authentication authentication) {
         Long employerId = getEmployerId(authentication);
         VacancyResponse vacancy = vacancyMapper.toVacancyResponse(service.createVacancy(vacancyToCreate, employerId));
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(vacancy, "Vacancy successfully created"));
@@ -62,7 +62,7 @@ public class VacancyController {
 
     @PutMapping("/{id}")
     @Secured("ROLE_EMPLOYER")
-    public ResponseEntity<ApiResponse<VacancyResponse>> updateVacancy(@PathVariable Long id, UpdateVacancyRequest vacancyToUpdate, Authentication authentication) {
+    public ResponseEntity<ApiResponse<VacancyResponse>> updateVacancy(@PathVariable Long id, @RequestBody UpdateVacancyRequest vacancyToUpdate, Authentication authentication) {
         Long employerId = getEmployerId(authentication);
         VacancyResponse vacancy = vacancyMapper.toVacancyResponse(service.updateVacancy(id, vacancyToUpdate, employerId));
         return ResponseEntity.ok().body(ApiResponse.success(vacancy, "Vacancy successfully updated"));

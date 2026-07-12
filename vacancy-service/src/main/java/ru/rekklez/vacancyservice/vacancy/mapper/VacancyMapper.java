@@ -8,7 +8,7 @@ import ru.rekklez.vacancyservice.vacancy.entity.VacancyEntity;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = CategoryMapper.class
+        uses = {VacancyMapper.class, CategoryMapper.class}
 )
 public interface VacancyMapper {
 
