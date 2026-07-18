@@ -38,6 +38,15 @@ public class UserEntity {
         this.createdAt = LocalDate.now();
     }
 
+    public UserEntity(String email, String passwordHash, Role role, String firstName, String lastName, String companyName) {
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.companyName = companyName;
+    }
+
     public Long getId() {
         return id;
     }

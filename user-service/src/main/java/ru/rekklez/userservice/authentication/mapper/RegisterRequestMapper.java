@@ -6,10 +6,8 @@ import org.mapstruct.factory.Mappers;
 import ru.rekklez.userservice.authentication.controller.dto.request.RegisterRequest;
 import ru.rekklez.userservice.user.entity.UserEntity;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface RegisterRequestMapper {
-
-    RegisterRequestMapper INSTANCE = Mappers.getMapper(RegisterRequestMapper.class);
 
     @Mapping(source = "password", target = "passwordHash")
     UserEntity mapToUserEntity(RegisterRequest newUser);

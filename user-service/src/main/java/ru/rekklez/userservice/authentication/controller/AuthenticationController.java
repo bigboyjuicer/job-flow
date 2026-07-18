@@ -33,16 +33,18 @@ public class AuthenticationController {
     private final UserService userService;
     private final AuthenticationService authenticationService;
     private final TokenService tokenService;
+    private final RegisterRequestMapper registerRequestMapper;
 
-    public AuthenticationController(UserService userService, AuthenticationService authenticationService, TokenService tokenService) {
+    public AuthenticationController(UserService userService, AuthenticationService authenticationService, TokenService tokenService, RegisterRequestMapper registerRequestMapper) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.tokenService = tokenService;
+        this.registerRequestMapper = registerRequestMapper;
     }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> register(@RequestBody @Valid RegisterRequest registerRequest) {
-        UserEntity userEntity = RegisterRequestMapper.INSTANCE.mapToUserEntity(registerRequest);
+        UserEntity userEntity = registerRequestMapper.mapToUserEntity(registerRequest);
         userService.createUser(new SecurityUser(userEntity));
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null, "Successfully registered"));
     }
