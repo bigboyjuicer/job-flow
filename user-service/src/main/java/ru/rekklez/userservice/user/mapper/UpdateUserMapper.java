@@ -5,10 +5,8 @@ import org.mapstruct.factory.Mappers;
 import ru.rekklez.userservice.user.controller.dto.request.UpdateUserProfileRequest;
 import ru.rekklez.userservice.user.entity.UserEntity;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UpdateUserMapper {
-
-    UpdateUserMapper INSTANCE = Mappers.getMapper(UpdateUserMapper.class);
 
     UserEntity mapToUserEntity(UpdateUserProfileRequest updateUserProfileRequest);
 

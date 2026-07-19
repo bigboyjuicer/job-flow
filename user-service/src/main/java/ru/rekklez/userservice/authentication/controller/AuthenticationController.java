@@ -19,8 +19,10 @@ import ru.rekklez.userservice.authentication.mapper.RegisterRequestMapper;
 import ru.rekklez.userservice.authentication.service.AuthenticationService;
 import ru.rekklez.userservice.authentication.service.TokenService;
 import ru.rekklez.userservice.security.SecurityUser;
+import ru.rekklez.userservice.user.controller.dto.response.ProfileResponse;
 import ru.rekklez.userservice.user.entity.UserEntity;
-import ru.rekklez.userservice.user.service.UserService;
+import ru.rekklez.userservice.user.mapper.ProfileResponseMapper;
+import ru.rekklez.userservice.user.service.DefaultUserService;
 import ru.rekklez.ApiResponse;
 import ru.rekklez.userservice.web.exception.NotValidRefreshTokenException;
 
@@ -30,23 +32,25 @@ public class AuthenticationController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
 
-    private final UserService userService;
+    private final DefaultUserService defaultUserService;
     private final AuthenticationService authenticationService;
     private final TokenService tokenService;
     private final RegisterRequestMapper registerRequestMapper;
+    private final ProfileResponseMapper profileResponseMapper;
 
-    public AuthenticationController(UserService userService, AuthenticationService authenticationService, TokenService tokenService, RegisterRequestMapper registerRequestMapper) {
-        this.userService = userService;
+    public AuthenticationController(DefaultUserService defaultUserService, AuthenticationService authenticationService, TokenService tokenService, RegisterRequestMapper registerRequestMapper, ProfileResponseMapper profileResponseMapper) {
+        this.defaultUserService = defaultUserService;
         this.authenticationService = authenticationService;
         this.tokenService = tokenService;
         this.registerRequestMapper = registerRequestMapper;
+        this.profileResponseMapper = profileResponseMapper;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<Void>> register(@RequestBody @Valid RegisterRequest registerRequest) {
+    public ResponseEntity<ApiResponse<ProfileResponse>> register(@RequestBody @Valid RegisterRequest registerRequest) {
         UserEntity userEntity = registerRequestMapper.mapToUserEntity(registerRequest);
-        userService.createUser(new SecurityUser(userEntity));
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null, "Successfully registered"));
+        ProfileResponse profile = profileResponseMapper.mapToProfileResponse(defaultUserService.createUser(userEntity));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(profile, "Successfully registered"));
     }
 
     @PostMapping("/login")

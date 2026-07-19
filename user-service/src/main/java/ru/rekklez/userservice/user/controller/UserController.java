@@ -14,6 +14,7 @@ import ru.rekklez.userservice.user.controller.dto.response.ProfileResponse;
 import ru.rekklez.userservice.user.entity.UserEntity;
 import ru.rekklez.userservice.user.mapper.ProfileResponseMapper;
 import ru.rekklez.userservice.user.mapper.UpdateUserMapper;
+import ru.rekklez.userservice.user.service.DefaultUserService;
 import ru.rekklez.userservice.user.service.UserService;
 
 @RestController
@@ -21,15 +22,17 @@ import ru.rekklez.userservice.user.service.UserService;
 public class UserController {
 
     private final UserService userService;
+    private final ProfileResponseMapper profileResponseMapper;
 
-    public UserController(UserService userService) {
+    public UserController(DefaultUserService userService, ProfileResponseMapper profileResponseMapper) {
         this.userService = userService;
+        this.profileResponseMapper = profileResponseMapper;
     }
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<ProfileResponse>> getUser(Authentication authentication) {
         UserEntity userEntity = ((SecurityUser) userService.loadUserByUsername(authentication.getName())).user();
-        ProfileResponse profileResponse = ProfileResponseMapper.INSTANCE.mapToProfileResponse(userEntity);
+        ProfileResponse profileResponse = profileResponseMapper.mapToProfileResponse(userEntity);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(profileResponse, "Successfully loaded user details"));
     }
 
@@ -37,13 +40,13 @@ public class UserController {
     public ResponseEntity<ApiResponse<Void>> updateUserProfile(Authentication authentication, @RequestBody @Valid UpdateUserProfileRequest profile) {
         UserEntity userEntity = UpdateUserMapper.INSTANCE.mapToUserEntity(profile);
         userEntity.setEmail(authentication.getName());
-        userService.updateUser(new SecurityUser(userEntity));
+        userService.updateUser(userEntity);
         return  ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(null, "Successfully updated profile"));
     }
 
     @PutMapping("/me/password")
-    public ResponseEntity<ApiResponse<Void>> updateUserPassword(@RequestBody @Valid UpdatePasswordRequest updatedPassword) {
-        userService.changePassword(updatedPassword.oldPassword(), updatedPassword.newPassword());
+    public ResponseEntity<ApiResponse<Void>> updateUserPassword(@RequestBody @Valid UpdatePasswordRequest updatedPassword, Authentication authentication) {
+        userService.updatePassword(updatedPassword.oldPassword(), updatedPassword.newPassword(), authentication);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(null, "Successfully changed password"));
     }
 
@@ -51,7 +54,7 @@ public class UserController {
     @Secured("ROLE_EMPLOYER")
     public ResponseEntity<ApiResponse<ProfileResponse>> getCandidate(@PathVariable long id) {
         UserEntity userEntity = ((SecurityUser) userService.loadUserById(id)).user();
-        ProfileResponse profileResponse = ProfileResponseMapper.INSTANCE.mapToProfileResponse(userEntity);
+        ProfileResponse profileResponse = profileResponseMapper.mapToProfileResponse(userEntity);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(profileResponse, "Successfully loaded candidate details"));
     }
 

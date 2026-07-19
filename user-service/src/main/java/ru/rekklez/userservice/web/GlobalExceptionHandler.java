@@ -46,6 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
+            IllegalArgumentException.class,
             UserAlreadyExistsException.class,
             HttpMessageNotReadableException.class,
             WrongPasswordException.class,

@@ -38,6 +38,9 @@ public class UserEntity {
         this.createdAt = LocalDate.now();
     }
 
+    public UserEntity() {
+    }
+
     public UserEntity(String email, String passwordHash, Role role, String firstName, String lastName, String companyName) {
         this.email = email;
         this.passwordHash = passwordHash;

@@ -5,10 +5,8 @@ import org.mapstruct.factory.Mappers;
 import ru.rekklez.userservice.user.controller.dto.response.ProfileResponse;
 import ru.rekklez.userservice.user.entity.UserEntity;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ProfileResponseMapper {
-
-    ProfileResponseMapper INSTANCE = Mappers.getMapper(ProfileResponseMapper.class);
 
     ProfileResponse mapToProfileResponse(UserEntity user);
 
