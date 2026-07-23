@@ -14,11 +14,12 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
     @Modifying
     @Query("UPDATE UserEntity u SET u.firstName = :firstName, u.lastName = :lastName, u.companyName = :companyName WHERE u.email = :email")
-    UserEntity updateUserProfile(String email, String firstName, String lastName, String companyName);
+    int updateUserProfile(String email, String firstName, String lastName, String companyName);
 
     @Modifying
     @Query("UPDATE UserEntity u SET u.passwordHash = :password WHERE u.email = :email")
-    UserEntity updateUserPassword(String email, String password);
+    int updateUserPassword(String email, String password);
 
     boolean existsByEmail(String email);
+
 }

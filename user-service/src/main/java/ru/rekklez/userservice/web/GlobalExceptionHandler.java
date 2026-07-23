@@ -9,9 +9,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.rekklez.ApiResponse;
 import ru.rekklez.userservice.web.exception.NotValidRefreshTokenException;
 import ru.rekklez.userservice.web.exception.UserAlreadyExistsException;
@@ -31,6 +33,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Something went wrong", null));
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> missingRequestBodyExceptionHandler(HttpMessageNotReadableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Request body is missing or incorrect", null));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Void>> requestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Request method not supported: " + ex.getMethod(), null));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> argumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Method argument mismatch: " + ex.getName(), null));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> validationExceptionHandler(MethodArgumentNotValidException ex) {
 
@@ -48,7 +65,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             IllegalArgumentException.class,
             UserAlreadyExistsException.class,
-            HttpMessageNotReadableException.class,
             WrongPasswordException.class,
             NotValidRefreshTokenException.class
     })
@@ -61,7 +77,7 @@ public class GlobalExceptionHandler {
             BadCredentialsException.class
     })
     public ResponseEntity<ApiResponse<Void>> unauthorizedHandler(Exception ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(ex.getMessage(), ex));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(ex.getMessage(), null));
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
@@ -71,7 +87,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<ApiResponse<Void>> forbiddenHandler(AuthorizationDeniedException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("Access forbidden", ex));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("Access forbidden", null));
     }
 
 }

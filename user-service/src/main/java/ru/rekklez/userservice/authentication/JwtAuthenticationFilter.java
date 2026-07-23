@@ -14,12 +14,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.rekklez.ApiResponse;
-import ru.rekklez.userservice.authentication.service.impl.DefaultTokenService;
+import ru.rekklez.userservice.authentication.service.TokenService;
+import ru.rekklez.userservice.user.service.UserService;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -29,13 +29,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-    private final DefaultTokenService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final TokenService jwtService;
+    private final UserService userService;
     private final ObjectMapper objectMapper;
 
-    public JwtAuthenticationFilter(DefaultTokenService jwtService, UserDetailsService userDetailsService, ObjectMapper objectMapper) {
+    public JwtAuthenticationFilter(TokenService jwtService, UserService userService, ObjectMapper objectMapper) {
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
+        this.userService = userService;
         this.objectMapper = objectMapper;
     }
 
@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = authorization.substring(7);
             String email = jwtService.extractClaimsFromAccessToken(token).getSubject();
-            UserDetails user = userDetailsService.loadUserByUsername(email);
+            UserDetails user = userService.loadUserByUsername(email);
 
             SecurityContext securityContext = SecurityContextHolder.getContext();
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());

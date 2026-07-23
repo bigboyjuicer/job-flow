@@ -34,9 +34,8 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public UserDetails loadUserById(long id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User with this id not found"));
-        return new SecurityUser(user);
+    public UserEntity loadUserById(long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User with this id not found"));
     }
 
     @Transactional
@@ -53,7 +52,8 @@ public class DefaultUserService implements UserService {
     public UserEntity updateUser(UserEntity user) {
         if(user == null) throw new IllegalArgumentException("User cannot be null");
         if(userRepository.existsByEmail(user.getEmail())) {
-            return userRepository.updateUserProfile(user.getEmail(), user.getFirstName(), user.getLastName(), user.getCompanyName());
+            userRepository.updateUserProfile(user.getEmail(), user.getFirstName(), user.getLastName(), user.getCompanyName());
+            return user;
         } else {
             throw new UsernameNotFoundException("User with this email not found");
         }
@@ -61,7 +61,7 @@ public class DefaultUserService implements UserService {
 
     @Transactional
     @Override
-    public UserEntity updatePassword(String oldPassword, String newPassword, Authentication authentication) {
+    public void updatePassword(String oldPassword, String newPassword, Authentication authentication) {
         if(oldPassword == null || newPassword == null || oldPassword.isEmpty() || newPassword.isEmpty())
             throw new IllegalArgumentException("Password cannot be null or empty");
         if(oldPassword.equals(newPassword))
@@ -71,7 +71,7 @@ public class DefaultUserService implements UserService {
                     .orElseThrow(() -> new UsernameNotFoundException("User with this email not found"));
             if(passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
                 String passwordHash = passwordEncoder.encode(newPassword);
-                return userRepository.updateUserPassword(user.getEmail(), passwordHash);
+                userRepository.updateUserPassword(user.getEmail(), passwordHash);
             } else {
                 throw new WrongPasswordException("Wrong password");
             }

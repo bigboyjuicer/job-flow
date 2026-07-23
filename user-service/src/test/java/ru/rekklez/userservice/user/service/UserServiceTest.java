@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -71,7 +72,7 @@ class UserServiceTest {
         @Test
         @DisplayName("Загрузка пользователя с несуществующим Email")
         void shouldThrowUsernameNotFound() {
-            when(userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.empty());
+            when(userRepository.findUserByEmail(any(String.class))).thenReturn(Optional.empty());
 
             assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(user.getEmail()));
 
@@ -100,11 +101,9 @@ class UserServiceTest {
 
             user.setId(id);
 
-            SecurityUser securityUser = new SecurityUser(user);
-
             when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
-            assertEquals(securityUser, userService.loadUserById(id));
+            assertEquals(user, userService.loadUserById(id));
 
             verify(userRepository).findById(id);
         }
@@ -112,9 +111,9 @@ class UserServiceTest {
         @Test
         @DisplayName("Загрузка пользователя с несуществующим ID")
         void shouldThrowUsernameNotFound() {
-            Long id = 5L;
+            long id = 5L;
 
-            when(userRepository.findById(id)).thenReturn(Optional.empty());
+            when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
             assertThrows(UsernameNotFoundException.class, () -> userService.loadUserById(id));
 
@@ -141,7 +140,7 @@ class UserServiceTest {
             String rawPassword = newUser.getPasswordHash();
             String encodedPassword = "ENCODED_" + rawPassword;
 
-            when(userRepository.existsByEmail(newUser.getEmail())).thenReturn(false);
+            when(userRepository.existsByEmail(any(String.class))).thenReturn(false);
             when(passwordEncoder.encode(newUser.getPasswordHash())).thenReturn(encodedPassword);
             when(userRepository.save(any(UserEntity.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -185,24 +184,13 @@ class UserServiceTest {
         @Test
         @DisplayName("Удачное обновление профиля пользователя")
         void updateUserSuccessfulTest() {
-            UserEntity updatedUser = new UserEntity(
-                    user.getEmail(),
-                    "password",
-                    Role.CANDIDATE,
-                    "NewFirstName",
-                    "NewLastName",
-                    "NewCompany"
-            );
-            updatedUser.setId(1L);
-
-
-            when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
+            when(userRepository.existsByEmail(any(String.class))).thenReturn(true);
             when(userRepository.updateUserProfile(user.getEmail(), user.getFirstName(), user.getLastName(), user.getCompanyName()))
-                    .thenReturn(updatedUser);
+                    .thenReturn(1);
 
             UserEntity result = userService.updateUser(user);
 
-            assertEquals(updatedUser, result);
+            assertEquals(user, result);
 
             verify(userRepository).existsByEmail(user.getEmail());
             verify(userRepository).updateUserProfile(user.getEmail(), user.getFirstName(), user.getLastName(), user.getCompanyName());
@@ -211,7 +199,7 @@ class UserServiceTest {
         @Test
         @DisplayName("Обновление профиля пользователя при несуществующем пользователе")
         void updateUserNotFoundTest() {
-            when(userRepository.existsByEmail(user.getEmail())).thenReturn(false);
+            when(userRepository.existsByEmail(any(String.class))).thenReturn(false);
 
             assertThrows(UsernameNotFoundException.class, () -> userService.updateUser(user));
 
@@ -243,31 +231,22 @@ class UserServiceTest {
             String newPassword = "123456789";
             String newEncodedPassword = "ENCODED_" + newPassword;
 
-            UserEntity updatedPasswordUser = new UserEntity(
-                    user.getEmail(),
-                    newEncodedPassword,
-                    user.getRole(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getCompanyName()
-            );
-
             when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(user));
             when(passwordEncoder.matches(oldPassword, user.getPasswordHash())).thenReturn(true);
             when(passwordEncoder.encode(newPassword)).thenReturn(newEncodedPassword);
-            when(userRepository.updateUserPassword(user.getEmail(), newEncodedPassword)).thenReturn(updatedPasswordUser);
+            when(userRepository.updateUserPassword(user.getEmail(), newEncodedPassword)).thenReturn(1);
 
-            UserEntity result = userService.updatePassword(oldPassword, newPassword, authentication);
-
-            assertAll(
-                    () -> assertEquals(newEncodedPassword, result.getPasswordHash()),
-                    () -> assertNotEquals(user.getPasswordHash(), result.getPasswordHash())
-            );
+            userService.updatePassword(oldPassword, newPassword, authentication);
 
             verify(userRepository).findUserByEmail(email);
             verify(passwordEncoder).matches(oldPassword, user.getPasswordHash());
             verify(passwordEncoder).encode(newPassword);
-            verify(userRepository).updateUserPassword(user.getEmail(), newEncodedPassword);
+
+            ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
+            verify(userRepository).updateUserPassword(eq(user.getEmail()), passwordCaptor.capture());
+
+            String encodedPassword = passwordCaptor.getValue();
+            assertEquals(newEncodedPassword, encodedPassword);
         }
 
         @ParameterizedTest

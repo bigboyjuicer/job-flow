@@ -7,9 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import ru.rekklez.userservice.user.entity.UserEntity;
 
 public interface UserService extends UserDetailsService {
-
-
-    UserDetails loadUserById(long id);
+    UserEntity loadUserById(long id);
 
     @Transactional
     UserEntity createUser(UserEntity user);
@@ -18,5 +16,5 @@ public interface UserService extends UserDetailsService {
     UserEntity updateUser(UserEntity user);
 
     @Transactional
-    UserEntity updatePassword(String oldPassword, String newPassword, Authentication authentication);
+    void updatePassword(String oldPassword, String newPassword, Authentication authentication);
 }
